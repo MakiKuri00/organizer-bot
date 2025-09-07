@@ -39,14 +39,16 @@ class Tasks:
         if name is None:
             self.name = name
     
-    def editName():
-        pass
+    def editName(name):
+        self.name = name
     
-    def editTime():
-        pass
+    def editTime(year:int, month:int, day:int, hour:int, minute:int):
+        self.deadline = datetime.datetime(year, month, day, hour, minute)
     
     def alarm():
-        pass
+        now = datetime.datetime.now()
+        if now.hour == deadline.hour and now.minute == deadline.minute and now.year == deadline.year and now.month == deadline.month and now.day == deadline.day:
+            SoundEffect()
     
     # todo: finish Tasks
             
