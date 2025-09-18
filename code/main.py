@@ -1,9 +1,11 @@
 import os
-import json
 import datetime
 import Tasks
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+
+curr_list = Tasks.TaskList()
+curr_list.load()
 
 #App Settings
 app = QApplication([])
@@ -22,6 +24,8 @@ else:
 
 curr_task_msg = QLabel("Here are your ongoing tasks:")
 
+task_list = QLabel(curr_list.__str__())
+
 op1 = QPushButton("Add")
 op2 = QPushButton("Delete")
 op3 = QPushButton("Edit")
@@ -37,7 +41,7 @@ row1.addWidget(welcome_msg, alignment=Qt.AlignCenter)
 
 row2.addWidget(curr_task_msg, alignment=Qt.AlignTop) # Alignment may need to be changed later
 
-#row3.addWidget(welcome_msg)
+row3.addWidget(task_list, alignment=Qt.AlignCenter)
 
 row4.addWidget(op1)
 row4.addWidget(op2)
@@ -45,7 +49,7 @@ row4.addWidget(op3)
 
 master_layout.addLayout(row1)
 master_layout.addLayout(row2)
-#master_layout.addLayout(row3)
+master_layout.addLayout(row3)
 master_layout.addLayout(row4)
 
 main_window.setLayout(master_layout)
@@ -53,6 +57,8 @@ main_window.setLayout(master_layout)
 #Exec
 main_window.show()
 app.exec_()
+
+#Implement button functions
 
 
 #Primitive code logic
