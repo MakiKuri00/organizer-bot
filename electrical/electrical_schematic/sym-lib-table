@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "Display_Waveshare")(type "KiCad")(uri "${KIPRJMOD}/Display_Waveshare.kicad_sym")(options "")(descr ""))
+)
