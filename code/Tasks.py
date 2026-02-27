@@ -1,13 +1,18 @@
-import datetime
+from datetime import datetime as dt
 import os
+import winsound as wsnd
+import csv
+import threading
 
 class TaskList:
     
     def __init__(self):
         self.task_list = []
     
-    def add(self, item: 'Item'):
+    def add(self, name: str, dl: dt):
+        item = Item(name, dt.strptime(dl, '%Y-%m-%d %I:%M:%S'))
         self.task_list.append(item)
+        print(self.task_list)
         #self.__str__()
     
     def delete(self, index: int):
@@ -29,21 +34,25 @@ class TaskList:
         else: 
             print('Invalid!')
     
-    #unfinished
+    def to_csv_list(self, task_list):
+        csv_list = []
+        for i in task_list:
+            csv_list.append([i.deadline.strftime('%Y-%m-%d %I:%M:%S'), i.name])
+        print(csv_list)
+        return csv_list
+    
     def save(self):
-        f = open("data.txt", "w")
-        f.write(self.__str__())
-        f.close()
+        with open("data.csv", "w", newline='') as f:
+            writer = csv.writer(f)
+            csv_list = self.to_csv_list(self.task_list)
+            writer.writerows(csv_list)
 
     def load(self):
-        if os.path.exists("data.txt"):
-            f = open("data.txt")
-            for line in f:
-                self.task_list.append(line)
-            f.close()
-        else:
-            f = open("data.txt", "x")
-            f.close()
+        with open("data.csv", "r") as f:
+            content = csv.reader(f)
+            for line in content:
+                self.task_list.append(Item(line[1], dt.strptime(line[0], '%Y-%m-%d %I:%M:%S')))
+            print(self.task_list)
         
     
     def __str__(self):
@@ -53,11 +62,8 @@ class TaskList:
         return output
 
 class Item:
-    name = ""
-    order = -1
-    
-    def __init__(self, name: str, year: int, month: int, day: int, hour: int, minute: int):
-        self.deadline = datetime.datetime(year, month, day, hour, minute)
+    def __init__(self, name: str, deadline: dt):
+        self.deadline = deadline
         if name is not None:
             self.name = name
     
@@ -65,17 +71,25 @@ class Item:
         self.name = name
     
     def editTime(self, year:int, month:int, day:int, hour:int, minute:int):
-        self.deadline = datetime.datetime(year, month, day, hour, minute)
+        self.deadline = dt(year, month, day, hour, minute)
     
-    def alarm(self):
-        now = datetime.datetime.now()
-        if now.hour == self.deadline.hour and now.minute == self.deadline.minute and now.year == self.deadline.year and now.month == self.deadline.month and now.day == self.deadline.day:
-            #SoundEffect()
-            pass
+    def play_audio(self, path):
+        try:
+            wsnd.PlaySound(path, wsnd.SND_FILENAME | wsnd.SND_NODEFAULT)
+        except Exception as e:
+            print(f"\nAlarm Error: {e}")
+
+    # def alarm(self):
+    #     now = dt.now()
+    #     if now >= self.deadline:
+    #         basedir = os.path.dirname(os.path.abspath(__file__))
+    #         path = os.path.join(basedir, 'alarm.wav')
+    #         alarm_thread = threading.Thread(target=self.play_audio, args=(path))
+    #         alarm_thread.start()
+    #         print('You missed a deadline!')
     
     def __str__(self):
-        return self.name + " " + self.deadline.__str__()
-    # todo: finish Tasks
+        return self.name + " " + self.deadline.strftime('%Y-%m-%d %I:%M:%S')
             
 
     
