@@ -79,14 +79,14 @@ class Item:
         except Exception as e:
             print(f"\nAlarm Error: {e}")
 
-    # def alarm(self):
-    #     now = dt.now()
-    #     if now >= self.deadline:
-    #         basedir = os.path.dirname(os.path.abspath(__file__))
-    #         path = os.path.join(basedir, 'alarm.wav')
-    #         alarm_thread = threading.Thread(target=self.play_audio, args=(path))
-    #         alarm_thread.start()
-    #         print('You missed a deadline!')
+    def alarm(self):
+        now = dt.now()
+        if now >= self.deadline:
+            basedir = os.path.dirname(os.path.abspath(__file__))
+            path = os.path.join(basedir, 'alarm.wav')
+            alarm_thread = threading.Thread(target=self.play_audio, args=(path))
+            alarm_thread.start()
+            print('You missed a deadline!')
     
     def __str__(self):
         return self.name + " " + self.deadline.strftime('%Y-%m-%d %I:%M:%S')
