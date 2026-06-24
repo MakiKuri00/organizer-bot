@@ -30,5 +30,21 @@ def delete_task(task_id):
     tasks.delete(task_id)
     return redirect('/')
 
+@app.route('/edit/<int:task_id>')
+def edit_task_form(task_id):
+    task = tasks.get_one(task_id)
+    if task is None:
+        return redirect('/')
+    return render_template('edit.html', task=task)
+
+@app.route('/edit/<int:task_id>', methods=['POST'])
+def edit_task(task_id):
+    name = request.form.get('task_name')
+    date = request.form.get('task_date')
+    time = request.form.get('task_time')
+    full_deadline = f"{date} {time}:00"
+    tasks.edit(task_id, name, full_deadline)
+    return redirect('/')
+
 if __name__ == "__main__":
     app.run(debug=True)

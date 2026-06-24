@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %} 
-<h1>Task Kiosk</h1>
+<h1>Dashboard</h1>
 {% endblock %}
 
 {% block body %} 
@@ -31,8 +31,16 @@
 <h2>Upcoming Tasks</h2>
 <ul>
     {% for task in tasks %}
-        <li>
-            {{ task.name }} - {{ task.deadline.strftime('%Y-%m-%d %I:%M %p') }}
+        <li data-task-id="{{ task.id }}" data-deadline="{{ task.deadline.isoformat() }}">
+            <span class="task-text">{{ task.name }} - {{ task.deadline.strftime('%Y-%m-%d %I:%M %p') }}</span>
+            
+            <a href="/edit/{{ task.id }}" class="edit-btn" title="Edit Task">
+                <!-- Draws Pencil Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            </a>
 
             <form action="/delete/{{ task.id }}" method="POST" style="display:inline;">
                 <button type="submit" class="done-btn" title="Mark as Done">
@@ -43,6 +51,6 @@
                 </button>
             </form>
         </li>
-        {% endfor %}
+    {% endfor %}
 </ul>
 {% endblock %}

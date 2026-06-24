@@ -5,6 +5,72 @@
     {% block head %} {% endblock %}
 </head>
 <body>
-    {% block body %} {% endblock %}
+    <div id="robot-splash" class="robot-splash">
+        <svg class="smiley" viewBox="0 0 200 160" xmlns="http://www.w3.org/2000/svg">
+            <circle class="eye" cx="70" cy="55" r="14" fill="aliceblue" />
+            <circle class="eye" cx="130" cy="55" r="14" fill="aliceblue" />
+            <path class="mouth" d="M 58 90 Q 100 128 142 90" fill="none" stroke="#4CAF50" stroke-width="8" stroke-linecap="round" />
+        </svg>
+        <p class="robot-greeting">Welcome Home!</p>
+    </div>
+
+    <div id="main-content" class="main-content">
+        {% block body %} {% endblock %}
+    </div>
+
+    <script>
+        (function () {
+            var splash = document.getElementById('robot-splash');
+            var content = document.getElementById('main-content');
+
+            if (sessionStorage.getItem('robotSplashSeen')) {
+                splash.style.display = 'none';
+                content.classList.add('show');
+                return;
+            }
+            sessionStorage.setItem('robotSplashSeen', '1');
+
+            var timer = setTimeout(finish, 2800);
+
+            // Let a kiosk user tap anywhere to skip straight to the UI.
+            splash.addEventListener('click', function () {
+                clearTimeout(timer);
+                finish();
+            });
+
+            function finish() {
+                splash.classList.add('hide');
+                content.classList.add('show');
+                setTimeout(function () { splash.style.display = 'none'; }, 650);
+            }
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var WARNING_WINDOW_MS = 2 * 60 * 60 * 1000; // 2 hour — how far ahead "near" starts
+
+            function updateDeadlineColors() {
+                var now = new Date();
+                document.querySelectorAll('li[data-deadline]').forEach(function (li) {
+                    var deadline = new Date(li.dataset.deadline);
+                    var textEl = li.querySelector('.task-text');
+                    var msRemaining = deadline - now;
+
+                    textEl.classList.remove('warning', 'missed-dl');
+
+                    if (msRemaining <= 0) {
+                        textEl.classList.add('missed-dl');
+                    } else if (msRemaining <= WARNING_WINDOW_MS) {
+                        textEl.classList.add('warning');
+                    }
+                });
+            }
+
+            updateDeadlineColors();
+            setInterval(updateDeadlineColors, 5000); // re-check every 30 seconds
+        });
+        
+
+    </script>
+
 </body>
 </html>

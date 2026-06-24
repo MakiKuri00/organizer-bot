@@ -1,8 +1,6 @@
 from datetime import datetime as dt
-import os
 import pygame
 import sqlite3
-import threading
 
 pygame.mixer.init()
 
@@ -30,21 +28,21 @@ class TaskList():
             conn.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
  
     
-    def edit(self, index: int, new_item: 'Item'):
-        if index - 1 <= len(self.task_list) and index - 1 >= 0:
-            self.task_list[index-1:index] = [new_item]
-
-    
-    # rearrange items in list
-    def rearrange(self, index: int, move_to: int):
-        if index - 1 <= len(self.task_list) and index - 1 >= 0 and move_to - 1 < len(self.task_list) and move_to - 1 >= 0:
-            self.task_list.insert(move_to - 1, self.task_list[index - 1])
-            self.task_list.pop(index - 1)
-
-        else: 
-            print('Invalid!')
+    def edit(self, task_id: int, name: str, dl: str):
+        with sqlite3.connect(self.db_name) as conn:
+            conn.execute("UPDATE tasks SET name = ?, deadline = ? WHERE id = ?", (name, dl, task_id))
         
-    
+    def get_one(self, task_id: int):
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.execute(
+                "SELECT id, name, deadline FROM tasks WHERE id = ?", (task_id,)
+            )
+            row = cursor.fetchone()
+            if row is None:
+                return None
+            deadline_obj = dt.strptime(row[2], '%Y-%m-%d %H:%M:%S')
+            return Item(row[1], deadline_obj, task_id=row[0])
+
     def get_all(self):
             items = []
             with sqlite3.connect(self.db_name) as conn:
@@ -70,23 +68,3 @@ class Item:
     
     def editTime(self, year:int, month:int, day:int, hour:int, minute:int):
         self.deadline = dt(year, month, day, hour, minute)
-    
-    def play_audio(self, path):
-        basedir = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(basedir, 'alarm.wav')
-        if os.path.exists(path):
-            pygame.mixer.music.load(path)
-            pygame.mixer.music.play()
-
-
-    def alarm(self):
-        now = dt.now()
-        if now >= self.deadline:
-            alarm_thread = threading.Thread(target=self.play_audio, daemon=True)
-            alarm_thread.start()
-            print('You missed a deadline!')
-            return True
-        return False
-    
-    def __str__(self):
-        return self.name + " " + self.deadline.strftime('%Y-%m-%d %I:%M:%S')

@@ -83,3 +83,103 @@ input {
     color: white;
     color-scheme: dark; 
 }
+
+.robot-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #00232c;
+    transition: opacity 0.6s ease;
+    cursor: pointer;
+}
+
+.robot-splash.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.main-content {
+    opacity: 0;
+}
+
+.main-content.show {
+    opacity: 1;
+    transition: opacity 0.6s ease;
+}
+
+.smiley {
+    width: clamp(90px, 18vw, 240px);
+    height: auto;
+}
+
+.eye {
+    opacity: 0;
+    transform: scale(0);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: eye-pop 0.4s ease-out 0.3s forwards;
+}
+
+.mouth {
+    stroke-dasharray: 110;
+    stroke-dashoffset: 110;
+    animation: draw-smile 0.6s ease-out 0.8s forwards;
+}
+
+.robot-greeting {
+    opacity: 0;
+    transform: translateY(8px);
+    color: aliceblue;
+    font-size: clamp(0.9rem, 2.2vw, 1.4rem);
+    margin-top: clamp(10px, 2vw, 20px);
+    animation: text-in 0.5s ease-out 1.4s forwards;
+}
+
+@keyframes eye-pop {
+    0%   { opacity: 0; transform: scale(0); }
+    70%  { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes draw-smile {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes text-in {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #248570;
+    border: 2px solid #248570;
+    color: white;
+    padding: 6px;
+    margin-left: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.edit-btn:active {
+    background-color: #1c6a59;
+    border: 2px solid #248570;
+}
+
+.edit-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.warning {
+    color:yellow
+}
+
+.missed-dl {
+    color:red
+}
